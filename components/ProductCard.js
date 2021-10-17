@@ -3,7 +3,6 @@ import Image from "next/image";
 import { formatter } from "../utils/helpers.js";
 
 const ProductCard = ({ product }) => {
-  console.log(product);
   const { handle, title } = product.node;
 
   const { altText, originalSrc } = product.node.images.edges[0].node;

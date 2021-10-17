@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { formatter } from "../utils/helpers";
 import ProductOptions from "./ProductOptions";
+import { CartContext } from "../context/shopContext";
 
 const ProductForm = ({ product }) => {
+  const { addToCart } = useContext(CartContext);
+  console.log(product);
   const allVariantOptions = product.variants.edges?.map((variant) => {
     const allOptions = {};
 
@@ -33,9 +36,19 @@ const ProductForm = ({ product }) => {
     setSelectedOptions((prevState) => {
       return { ...prevState, [name]: value };
     });
+    // spread in the current, but changing the value that was changed in our options.
+    const selection = {
+      ...selectedOptions,
+      [name]: value,
+    };
+
+    allVariantOptions.map((item) => {
+      if (JSON.stringify(item.options) === JSON.stringify(selection)) {
+        setSelectedVariant(item);
+      }
+    });
   }
 
-  console.log(defaultValues, allVariantOptions);
   return (
     <div className="rounded-2xl p-4 shadow-lg, flex flex-col w-full md:w-1/3">
       <h2 className="text-2xl font-bold">{product.title}</h2>
@@ -52,7 +65,12 @@ const ProductForm = ({ product }) => {
           setOptions={setOptions}
         />
       ))}
-      <button className="bg-black rounded-lg text-white px-2 py-3 hover:bg-gray-800">
+      <button
+        onClick={() => {
+          addToCart(selectedVariant);
+        }}
+        className="bg-black rounded-lg text-white px-2 py-3 hover:bg-gray-800"
+      >
         Add to cart
       </button>
     </div>
